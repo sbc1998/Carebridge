@@ -71,5 +71,5 @@ function sendResponse(request, response) {
 
 const server = http.createServer(sendResponse);
 server.listen(4000, () => {
-  console.log("Server listening on port 4000");
+  console.log("Server started on port 4000");
 });
