@@ -1,0 +1,15 @@
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid black;
+}
+.right {
+    font-size: x-large;
+}
+.left {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+}

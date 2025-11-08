@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140" viewBox="0 0 140 140" role="img" aria-label="CareBridge logo icon">
+  <defs>
+    <style>
+      .c-shape { 
+        stroke: #FFFFFF; /* White C */
+        stroke-width: 12; 
+        stroke-linecap: round; 
+        fill: none; 
+      }
+      .heart { 
+        fill: #000000; /* Black heart */
+        stroke: none; 
+      }
+    </style>
+  </defs>
+
+  <!-- Big curved C -->
+  <path class="c-shape" d="M100 30 
+                           A50 50 0 1 0 100 110" />
+
+  <!-- Heart nestled inside -->
+  <g transform="translate(70,70) scale(0.8)">
+    <path class="heart" d="M0 -12
+                           C0 -20 12 -20 15 -13
+                           C20 -20 32 -18 32 -6
+                           C32 8 16 20 0 32
+                           C-16 20 -32 8 -32 -6
+                           C-32 -18 -20 -20 -15 -13
+                           C-12 -20 0 -20 0 -12Z"/>
+  </g>
+</svg>

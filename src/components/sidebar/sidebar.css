@@ -1,0 +1,37 @@
+.hover-effect {
+  transition: background-color 0.3s ease;
+}
+
+.hover-effect:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Light overlay on primary */
+}
+
+.sidebar-profile img {
+  border: 2px solid #fff;
+}
+
+/* Soft background colors for stat cards */
+.bg-soft-primary {
+  background: #e9f3ff;
+}
+.bg-soft-success {
+  background: #e8f9f1;
+}
+.bg-soft-warning {
+  background: #fff7e6;
+}
+.bg-soft-info {
+  background: #e9f9ff;
+}
+
+/* Hover effect for stat cards */
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+  transition: all 0.2s ease-in-out;
+}
