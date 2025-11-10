@@ -318,8 +318,11 @@ async function cancelAppointment(appointment_id) {
                                 <button className="btn btn-sm text-white rounded-pill" style={{ background: "#FF8282" }}>Cancel</button>
                               </>
                             )}
+                            {appt.STATUS === "APPROVED" && (
+                              <button className="btn btn-sm text-white bg-success rounded-pill">Check Patient</button>        
+                            )}
                             <button
-                              className="btn btn-sm text-white bg-secondary rounded-pill"
+                              className="btn btn-sm text-white bg-warning rounded-pill"
                               data-bs-toggle="modal"
                               data-bs-target="#createAppointmentModal"
                               onClick={() => {
