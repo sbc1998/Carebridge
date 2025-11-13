@@ -11,6 +11,7 @@ const Doctor = () => {
 
   // List of appointments
   const [appointments, setAppointments] = useState([]);
+  console.log("total appointment list:", appointments);
 
   // Single appointment form (create / reschedule)
   const [appointmentForm, setAppointmentForm] = useState({
@@ -33,6 +34,14 @@ const Doctor = () => {
   //to make form input readonly
   const [editable, setEditable] = useState(true);
 
+  //number of appointments
+  const [appointmentsCount, setAppointmentsCount]= useState({
+    total: 0,
+    approved: 0,
+    pending: 0,
+    cancelled: 0
+  });
+
   // Doctor info
   const [doctor, setDoctor] = useState({
     FIRST_NAME: "",
@@ -47,20 +56,54 @@ const Doctor = () => {
     PROFILE_URL: ""
   });
 
-  // Fetch appointments
-  useEffect(() => {
-    async function fetchAppointments() {
-      try {
-        const response = await fetch(`http://localhost:4000/appointment/${user_id}`);
-        const data = await response.json();
-        console.log("Appointments fetched:", data);
-        setAppointments(data);
-      } catch (error) {
-        console.error("Error fetching appointments:", error);
-      }
+  // To get total number of appointments
+  async function calculateAppointmentsCount() {
+    try {
+      const url = `http://localhost:4000/doctor/${user_id}/appointments/counts`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const approved_number =
+        data.find(({ STATUS }) => STATUS === "APPROVED")?.appointment_count || 0;
+
+      const pending_number =
+        data.find(({ STATUS }) => STATUS === "PENDING")?.appointment_count || 0;
+
+      const cancelled_number =
+        data.find(({ STATUS }) => STATUS === "CANCELLED")?.appointment_count || 0;
+
+      const total_number = approved_number + pending_number + cancelled_number;
+
+      setAppointmentsCount({
+        total: total_number,
+        approved: approved_number,
+        pending: pending_number,
+        cancelled: cancelled_number,
+      });
+    } catch (error) {
+      console.error("Error getting appointments count:", error);
     }
+  }
+
+  useEffect(() => {
+    calculateAppointmentsCount();
+  }, [user_id]);
+
+  // Fetch appointments
+  async function fetchAppointments() {
+    try {
+      const response = await fetch(`http://localhost:4000/appointment/${user_id}`);
+      const data = await response.json();
+      setAppointments(data);
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+    }
+  }
+
+  useEffect(() => {
     fetchAppointments();
   }, [user_id]);
+
 
   // Fetch doctor info
   useEffect(() => {
@@ -150,9 +193,12 @@ const Doctor = () => {
         setTimeout(() => setShowToast(false), 3000);
 
         // Refresh appointments
-        const refreshResponse = await fetch(`http://localhost:4000/appointment/${user_id}`);
-        const refreshedData = await refreshResponse.json();
-        setAppointments(refreshedData);
+        // const refreshResponse = await fetch(`http://localhost:4000/appointment/${user_id}`);
+        // const refreshedData = await refreshResponse.json();
+        // setAppointments(refreshedData);
+
+        fetchAppointments();
+        calculateAppointmentsCount();
 
       } catch (error) {
         console.error("Error submitting appointment:", error.message);
@@ -185,21 +231,20 @@ const Doctor = () => {
 
 //to cancel and delete appointment from database
 async function cancelAppointment(appointment_id) {
-      console.log("app_id", appointment_id);
       try {
         const url= `http://localhost:4000/deleteAppointment/${appointment_id}`;
         const options= {
           method: 'DELETE'
         }
-        const response = await fetch(url, options);
-        const data= await response.json();
-        console.log(data);
-        console.log("appointment deleted");
+        await fetch(url, options);
+        //update appointment state after cancelling appointment
+        // setAppointments((prev)=> prev.filter((item)=> item.APPOINTMENT_ID !== appointment_id));
+        await fetchAppointments();
+        await calculateAppointmentsCount();
       } catch (error) {
         console.error("Error deleting appointment:", error);
       }
 }
-
   return (
     <>
       {/* Toast */}
@@ -233,7 +278,8 @@ async function cancelAppointment(appointment_id) {
                   Welcome Dr. {doctor.FIRST_NAME} {doctor.LAST_NAME}
                 </h2>
                 <p className="fw-light text-muted">
-                  You have <strong>{appointments.length}</strong> appointments scheduled today.
+                  You have {appointmentsCount.total === 0 ? "no " : <strong> {appointmentsCount.total} </strong>}
+ appointments scheduled today.
                 </p>
                 <p className="fw-light text-muted">
                   Let’s make today productive and positive 💙
@@ -322,7 +368,7 @@ async function cancelAppointment(appointment_id) {
                               <button className="btn btn-sm text-white bg-success rounded-pill">Check Patient</button>        
                             )}
                             <button
-                              className="btn btn-sm text-white bg-warning rounded-pill"
+                              className="btn btn-sm text-white bg-primary rounded-pill"
                               data-bs-toggle="modal"
                               data-bs-target="#createAppointmentModal"
                               onClick={() => {
