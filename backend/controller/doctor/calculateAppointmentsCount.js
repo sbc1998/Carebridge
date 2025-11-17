@@ -2,13 +2,21 @@ const connection = require("../../db/connection.js");
 
 function calculateAppointmentsCount(request, response, user_id) {
   const sql = `
-    SELECT 
-      STATUS,
-      COUNT(*) AS appointment_count
-    FROM APPOINTMENT
-    WHERE STATUS IN('APPROVED', 'CANCELLED', 'PENDING')
-          AND DOCTOR_ID= ?
-    GROUP BY STATUS; 
+    SELECT s.status,
+       COALESCE(COUNT(a.status), 0) AS appointment_count
+FROM (
+    SELECT 'APPROVED' AS status
+    UNION ALL
+    SELECT 'CANCELLED'
+    UNION ALL
+    SELECT 'PENDING'
+) AS s
+LEFT JOIN appointment a
+       ON a.status = s.status
+      AND a.doctor_id = ?
+GROUP BY s.status;
+
+
   `;
 
   connection.query(sql, [user_id], (err, result) => {
@@ -21,6 +29,8 @@ function calculateAppointmentsCount(request, response, user_id) {
 
     if (result.length > 0) {
       response.writeHead(200, { 'Content-Type': 'application/json' });
+      console.log("result:", result);
+      debugger
       response.end(JSON.stringify(result)); 
     } else {
       response.writeHead(404, { 'Content-Type': 'application/json' });

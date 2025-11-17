@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from '../navbar/navbar';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -11,7 +11,6 @@ const Doctor = () => {
 
   // List of appointments
   const [appointments, setAppointments] = useState([]);
-  console.log("total appointment list:", appointments);
 
   // Single appointment form (create / reschedule)
   const [appointmentForm, setAppointmentForm] = useState({
@@ -62,24 +61,25 @@ const Doctor = () => {
       const url = `http://localhost:4000/doctor/${user_id}/appointments/counts`;
       const response = await fetch(url);
       const data = await response.json();
-
+      console.log(data);
       const approved_number =
-        data.find(({ STATUS }) => STATUS === "APPROVED")?.appointment_count || 0;
-
+        data.find(({ status }) => status === "APPROVED")?.appointment_count || 0;
       const pending_number =
-        data.find(({ STATUS }) => STATUS === "PENDING")?.appointment_count || 0;
+        data.find(({ status }) => status === "PENDING")?.appointment_count || 0;
 
       const cancelled_number =
-        data.find(({ STATUS }) => STATUS === "CANCELLED")?.appointment_count || 0;
+        data.find(({ status }) => status === "CANCELLED")?.appointment_count || 0;
 
       const total_number = approved_number + pending_number + cancelled_number;
-
-      setAppointmentsCount({
+      console.log("total appointment:", total_number);
+      setAppointmentsCount((prev)=> ({
+        ...prev,
         total: total_number,
         approved: approved_number,
         pending: pending_number,
-        cancelled: cancelled_number,
-      });
+        cancelled: cancelled_number
+      }))
+
     } catch (error) {
       console.error("Error getting appointments count:", error);
     }
@@ -89,6 +89,16 @@ const Doctor = () => {
     calculateAppointmentsCount();
   }, [user_id]);
 
+//   const fetchAppointments = useCallback(async () => {
+//   try {
+//     const response = await fetch(`http://localhost:4000/appointment/${user_id}`);
+//     const data = await response.json();
+//     setAppointments(data);
+//   } catch (error) {
+//     console.error("Error fetching appointments:", error);
+//   }
+// }, [user_id, setAppointments]);
+
   // Fetch appointments
   async function fetchAppointments() {
     try {
@@ -96,7 +106,7 @@ const Doctor = () => {
       const data = await response.json();
       setAppointments(data);
     } catch (error) {
-      console.error("Error fetching appointments:", error);
+      // console.error("Error fetching appointments:", error);
     }
   }
 
@@ -111,7 +121,6 @@ const Doctor = () => {
       try {
         const response = await fetch(`http://localhost:4000/doctor/${user_id}`);
         const data = await response.json();
-        console.log("Doctor info:", data);
         setDoctor(data);
       } catch (error) {
         console.error("Error fetching doctor:", error);
@@ -279,7 +288,7 @@ async function cancelAppointment(appointment_id) {
                 </h2>
                 <p className="fw-light text-muted">
                   You have {appointmentsCount.total === 0 ? "no " : <strong> {appointmentsCount.total} </strong>}
- appointments scheduled today.
+                  appointments scheduled today.
                 </p>
                 <p className="fw-light text-muted">
                   Let’s make today productive and positive 💙
@@ -290,10 +299,10 @@ async function cancelAppointment(appointment_id) {
                 <h5 className="fw-light mb-4 text-dark">Report</h5>
                 <div className="row g-4">
                   {[
-                    { label: 'Approved', value: '7', color: 'linear-gradient(135deg, #198754, #28a745)' },
-                    { label: 'Total', value: '50', color: 'linear-gradient(135deg, #6f42c1, #a370f7)' },
-                    { label: 'Pending', value: '3', color: 'linear-gradient(135deg, #ffc107, #ffda6a)' },
-                    { label: 'Cancelled', value: '15', color: 'linear-gradient(135deg, #dc3545, #ff6b6b)' },
+                    { label: 'Approved', value: appointmentsCount.approved, color: 'linear-gradient(135deg, #198754, #28a745)' },
+                    { label: 'Total', value: appointmentsCount.total, color: 'linear-gradient(135deg, #6f42c1, #a370f7)' },
+                    { label: 'Pending', value: appointmentsCount.pending, color: 'linear-gradient(135deg, #ffc107, #ffda6a)' },
+                    { label: 'Cancelled', value: appointmentsCount.cancelled, color: 'linear-gradient(135deg, #dc3545, #ff6b6b)' },
                   ].map((card, idx) => (
                     <div className="col-md-3" key={idx}>
                       <div className="p-4 rounded-4 text-center h-100" style={{ background: card.color }}>

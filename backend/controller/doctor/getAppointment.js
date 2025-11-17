@@ -17,7 +17,6 @@ function getAppointment(request, response, user_id) {
       A.DOCTOR_ID = ?;
   `;
 
-
   connection.query(sql, [user_id], (err, result) => {
     if (err) {
       console.error("Database error:", err);
@@ -30,7 +29,9 @@ function getAppointment(request, response, user_id) {
       response.writeHead(200, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify(result)); 
     } else {
-      response.writeHead(404, { 'Content-Type': 'application/json' });
+      // console.log("no appt found");
+      // debugger
+      response.writeHead(200, { 'Content-Type': 'application/json' });
       response.end(JSON.stringify({ error: "No appointments found" }));
     }
   });
