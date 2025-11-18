@@ -5,6 +5,7 @@ import Signup from './pages/signup/signup';
 import Login from './pages/login/login';
 import Doctor from "./pages/doctor/doctor";
 import Profile from "./components/profile/profile";
+import PatientCase from "./pages/doctor/PatientCase/index";
 import CreateAppointment from "./components/Doctor/CreateAppointment";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ function App() {
         <Route path='/doctor' element={<Doctor />}/>
         <Route path='/profile' element={<Profile />}/>
         <Route path='/createAppointment' element={<CreateAppointment />}/>
+        <Route path='/patient-case' element={<PatientCase />} />
         {/* <Route path="/createAppointment" element={<div>Test Page</div>} /> */}
 
       </Routes>

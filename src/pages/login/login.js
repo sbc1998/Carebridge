@@ -123,6 +123,9 @@ const Login= () => {
                             <Link to="/signup" className="link-primary text-decoration-none">
                                 Sign up
                             </Link>
+                            <Link to="/patient-case">
+                                <button className="btn btn-sm text-white bg-success rounded-pill">Examine</button> 
+                            </Link> 
                         </p>
                     </div>
                 </div>

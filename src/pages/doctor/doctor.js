@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Link from 'react';
 import Sidebar from "../../components/sidebar/sidebar";
 import Navbar from '../navbar/navbar';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -338,6 +339,7 @@ async function cancelAppointment(appointment_id) {
               >
                 Create Appointment
               </button>
+ 
             </div>
 
             <div className="row g-4 align-items-stretch">
@@ -374,7 +376,7 @@ async function cancelAppointment(appointment_id) {
                               </>
                             )}
                             {appt.STATUS === "APPROVED" && (
-                              <button className="btn btn-sm text-white bg-success rounded-pill">Check Patient</button>        
+                              <button className="btn btn-sm text-white bg-success rounded-pill">Examine</button>       
                             )}
                             <button
                               className="btn btn-sm text-white bg-primary rounded-pill"
